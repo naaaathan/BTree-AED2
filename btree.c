@@ -5,7 +5,7 @@
 #include<stdbool.h>
 #include"btree.h"
 
-#define M 1024
+#define M 4
 
 
 struct ArvB   //FEITA
@@ -29,114 +29,86 @@ ArvB cria_ArvB()  //FEITA
 
 int libera_ArvB(ArvB raiz)  //FAZENDO==============================>(NAO ESTA DANDO CERTO )
 {
-    if((raiz)->qtd == 0)
+    if(raiz->qtd == 0)
     {
         printf("Nao existe no nessa arvore... \nNao sera preciso libera-la...\n\n\n");
-        return 0;//NAO EXISTE ELEMENTO NA RAIZ, LOGO, A ARVORE NÃO TEM NADA A SER LIBERADO
+        return 0;
+        //NAO EXISTE ELEMENTO NA RAIZ, LOGO, A ARVORE NÃO TEM NADA A SER LIBERADO
     }
 
-    int i,j;
-    int cont = 0;
+    int j;
 
-    for(i=0; i<(raiz)->qtd+1; i++)
-    {
-        if((raiz)->p[i]== NULL)
-            cont ++;      // PARA POSTERIORMENTE CHECAR SE ELA NÃO POSSUI NENNHUM FILHO (É UM NÓ FOLHA)
-    }
 
-    if(cont != (raiz)->qtd+1) // SE FOR UM NO NÃO FOLHA{
+    if(!raiz->ehFolha) // SE FOR UM NO NÃO FOLHA{
     {
-        for(j = 0; j<(raiz)->qtd+1; j++)
+        for(j = 0; j < raiz->qtd; j++)
         {
-            libera_ArvB((raiz)->p[j]);
+            libera_ArvB(raiz->p[j]);
         }
     }
+
     raiz->qtd = 0;
+
     free(raiz);// LIBERA
 
     return 1;
 }
 
-int imprime_nos(ArvB no)  //FEITA ( NAO FOI PEDIDA)
+
+int retornaValor(int n, int *vet, int valor)
 {
-    if((no)->qtd == 0 || no == NULL)
-    {
-        printf("Esse no NAO possui elementos...\n");
-        return 0 ;
+
+    int min;
+    int max;
+    int meio;
+
+    min = -1;
+    max = n;
+
+    while(min + 1 < max) {
+        meio = (min+max)/2;
+        if(vet[meio] == valor) {
+            return meio;
+        } else if(vet[meio] < valor) {
+            min = meio;
+        } else {
+            max = meio;
+        }
     }
 
-//     printf("NO qtd = %i \n\n",(*no)->qtd);
-    printf("NO --> [  ");
-    for( int i = 0; i < (no)->qtd ; i++ )
-    {
-        printf("[%i] ",(no)->chaves[i]);
-    }
-    printf("  ]\n");
-
-    return 1;
+    return max;
 }
 
-ArvB insere_ArvB_aux(ArvB b, int valor, int *metade)
+
+
+ArvB insere_ArvB_aux(ArvB b, int valor, int *mediano)
 {
     int pos;
     int meio;
     ArvB b2;
 
+    pos = retornaValor(b->qtd, b->chaves, valor);
 
-    int menor;
-    int maior;
-    int intermed;
-
-    menor = -1;
-
-    maior = b->qtd;
-
-    while(menor + 1 < maior)
-    {
-        intermed = (menor + maior) / 2;
-
-        if(b->chaves[intermed] == valor)
-        {
-            pos = intermed;
-
-        }
-        else if (b->chaves[intermed] < valor)
-        {
-
-            menor = intermed;
-        }
-        else
-        {
-
-            maior = intermed;
-        }
-
-    }
-
-    pos = maior;
-
-    if(pos < b->qtd++ && b->chaves[pos] == valor)
-    {
+    if(pos < b->qtd && b->chaves[pos] == valor) {
 
         return 0;
     }
 
-    if(b->ehFolha)
-    {
-        memmove(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
+    if(b->ehFolha) {
+
+        memcpy(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
         b->chaves[pos] = valor;
         b->qtd++;
-    }
-    else
-    {
+
+    } else {
 
         b2 = insere_ArvB_aux(b->p[pos], valor, &meio);
 
-        if(b2)
-        {
-            memmove(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
+        if(b2) {
 
-            memmove(&b->p[pos+2], &b->p[pos+1], sizeof(*(b->chaves)) * (b->qtd - pos));
+            memcpy(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
+
+            memcpy(&b->p[pos+2], &b->p[pos+1], sizeof(*(b->chaves)) * (b->qtd - pos));
 
             b->chaves[pos] = meio;
             b->p[pos+1] = b2;
@@ -145,31 +117,29 @@ ArvB insere_ArvB_aux(ArvB b, int valor, int *metade)
     }
 
 
-    if(b->qtd >= M)
-    {
+    if(b->qtd >= M) {
         meio = b->qtd/2;
 
-        *metade = b->chaves[meio];
+        *mediano = b->chaves[meio];
 
         b2 = malloc(sizeof(*b2));
 
         b2->qtd = b->qtd - meio - 1;
         b2->ehFolha = b->ehFolha;
 
-        memmove(b2->chaves, &b->chaves[meio+1], sizeof(*(b->chaves)) * b2->qtd);
-        if(!b->ehFolha)
-        {
-            memmove(b2->p, &b->p[meio+1], sizeof(*(b->p)) * (b2->qtd + 1));
+        memcpy(b2->chaves, &b->chaves[meio+1], sizeof(*(b->chaves)) * b2->qtd);
+        if(!b->ehFolha) {
+            memcpy(b2->p, &b->p[meio+1], sizeof(*(b->p)) * (b2->qtd + 1));
         }
 
         b->qtd = meio;
 
         return b2;
 
-    }
-    else
-    {
+    } else {
+
         return 0;
+
     }
 }
 
@@ -177,28 +147,26 @@ void insere_ArvB(ArvB b, int valor)
 {
     ArvB b1;
     ArvB b2;
-    int metade;
+    int mediano;
 
-    b2 = insere_ArvB_aux(b, valor, &metade);
+    b2 = insere_ArvB_aux(b, valor, &mediano);
 
-    if(b2 != NULL)
-    {
-        b1 = malloc(sizeof(*b1));
+    b1 = malloc(sizeof(*b1));
 
-        memmove(b1, b, sizeof(*b));
+    memcpy(b1, b, sizeof(*b));
 
-        b->qtd = 1;
-        b->ehFolha = false;
-        b->chaves[0] = metade;
-        b->p[0] = b1;
-        b->p[1] = b2;
-    }
+    b->qtd = 1;
+    b->ehFolha = false;
+    b->chaves[0] = mediano;
+    b->p[0] = b1;
+    b->p[1] = b2;
+
 }
 
 int ehVazia_ArvB(ArvB raiz)  //FEITA
 {
 
-    if((raiz)->qtd == 0)
+    if(raiz->qtd == 0)
     {
         printf("A arvore esta vazia...\n\n");
         return 1;
