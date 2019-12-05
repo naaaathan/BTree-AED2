@@ -15,8 +15,5 @@ int main()
     insere_ArvB(a,19);
     insere_ArvB(a,21);
 
-    imprime_nos(a);
-
-
     return 0;
 }
