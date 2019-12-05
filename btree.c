@@ -54,112 +54,23 @@ int libera_ArvB(ArvB raiz)  //FAZENDO==============================>(NAO ESTA DA
     return 1;
 }
 
-
-int retornaValor(int n, int *vet, int valor)
+void insere_ArvB(ArvB arv, int valor)
 {
-
-    int min;
-    int max;
-    int meio;
-
-    min = -1;
-    max = n;
-
-    while(min + 1 < max) {
-        meio = (min+max)/2;
-        if(vet[meio] == valor) {
-            return meio;
-        } else if(vet[meio] < valor) {
-            min = meio;
-        } else {
-            max = meio;
-        }
-    }
-
-    return max;
-}
-
-
-
-ArvB insere_ArvB_aux(ArvB b, int valor, int *mediano)
-{
-    int pos;
-    int meio;
-    ArvB b2;
-
-    pos = retornaValor(b->qtd, b->chaves, valor);
-
-    if(pos < b->qtd && b->chaves[pos] == valor) {
-
-        return 0;
-    }
-
-    if(b->ehFolha) {
-
-        memcpy(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
-        b->chaves[pos] = valor;
-        b->qtd++;
-
-    } else {
-
-        b2 = insere_ArvB_aux(b->p[pos], valor, &meio);
-
-        if(b2) {
-
-            memcpy(&b->chaves[pos+1], &b->chaves[pos], sizeof(*(b->chaves)) * (b->qtd - pos));
-
-            memcpy(&b->p[pos+2], &b->p[pos+1], sizeof(*(b->chaves)) * (b->qtd - pos));
-
-            b->chaves[pos] = meio;
-            b->p[pos+1] = b2;
-            b->qtd++;
-        }
-    }
-
-
-    if(b->qtd >= M) {
-        meio = b->qtd/2;
-
-        *mediano = b->chaves[meio];
-
-        b2 = malloc(sizeof(*b2));
-
-        b2->qtd = b->qtd - meio - 1;
-        b2->ehFolha = b->ehFolha;
-
-        memcpy(b2->chaves, &b->chaves[meio+1], sizeof(*(b->chaves)) * b2->qtd);
-        if(!b->ehFolha) {
-            memcpy(b2->p, &b->p[meio+1], sizeof(*(b->p)) * (b2->qtd + 1));
-        }
-
-        b->qtd = meio;
-
-        return b2;
-
-    } else {
-
-        return 0;
-
-    }
-}
-
-void insere_ArvB(ArvB b, int valor)
-{
-    ArvB b1;
-    ArvB b2;
+    ArvB arv1;
+    ArvB arv2;
     int mediano;
 
-    b2 = insere_ArvB_aux(b, valor, &mediano);
+    arv2 = insere_ArvB_aux(arv, valor, &mediano);
 
-    b1 = malloc(sizeof(*b1));
+    arv1 = malloc(sizeof(*arv1));
 
-    memcpy(b1, b, sizeof(*b));
+    memcpy(arv1, arv, sizeof(*arv));
 
-    b->qtd = 1;
-    b->ehFolha = false;
-    b->chaves[0] = mediano;
-    b->p[0] = b1;
-    b->p[1] = b2;
+    arv->qtd = 1;
+    arv->ehFolha = false;
+    arv->chaves[0] = mediano;
+    arv->p[0] = arv1;
+    arv->p[1] = arv2;
 
 }
 
@@ -217,7 +128,7 @@ int totalNO_ArvB(ArvB raiz) // FAZENDO
     return contador;
 }
 
-int busca_ArvB(ArvB raiz, int valor)  //FEITA
+int busca_ArvB(ArvB raiz, int valor)
 {
 
     if((raiz)->qtd == 0 || raiz == NULL)
@@ -241,6 +152,93 @@ int busca_ArvB(ArvB raiz, int valor)  //FEITA
 
     printf("Nao foi achado o elemento...\n Retornando 0...\n");
     return 0;
+}
+
+//FUNÇÕES AUXILIARES PARA A INSERE
+
+int retornaValor(int n, int *vet, int valor)
+{
+
+    int min;
+    int max;
+    int meio;
+
+    min = -1;
+    max = n;
+
+    while(min + 1 < max) {
+        meio = (min+max)/2;
+        if(vet[meio] == valor) {
+            return meio;
+        } else if(vet[meio] < valor) {
+            min = meio;
+        } else {
+            max = meio;
+        }
+    }
+
+    return max;
+}
 
 
+ArvB insere_ArvB_aux(ArvB arv, int valor, int *mediano)
+{
+    int pos;
+    int meio;
+    ArvB arv2;
+
+    pos = retornaValor(arv->qtd, arv->chaves, valor);
+
+    if(pos < arv->qtd && arv->chaves[pos] == valor) {
+
+        return 0;
+    }
+
+    if(arv->ehFolha) {
+
+        memcpy(&arv->chaves[pos+1], &arv->chaves[pos], sizeof(*(arv->chaves)) * (arv->qtd - pos));
+        arv->chaves[pos] = valor;
+        arv->qtd++;
+
+    } else {
+
+        arv2 = insere_ArvB_aux(arv->p[pos], valor, &meio);
+
+        if(arv2) {
+
+            memcpy(&arv->chaves[pos+1], &arv->chaves[pos], sizeof(*(arv->chaves)) * (arv->qtd - pos));
+
+            memcpy(&arv->p[pos+2], &arv->p[pos+1], sizeof(*(arv->chaves)) * (arv->qtd - pos));
+
+            arv->chaves[pos] = meio;
+            arv->p[pos+1] = arv2;
+            arv->qtd++;
+        }
+    }
+
+
+    if(arv->qtd >= M) {
+        meio = arv->qtd/2;
+
+        *mediano = arv->chaves[meio];
+
+        arv2 = malloc(sizeof(*arv2));
+
+        arv2->qtd = arv->qtd - meio - 1;
+        arv2->ehFolha = arv->ehFolha;
+
+        memcpy(arv2->chaves, &arv->chaves[meio+1], sizeof(*(arv->chaves)) * arv2->qtd);
+        if(!arv->ehFolha) {
+            memcpy(arv2->p, &arv->p[meio+1], sizeof(*(arv->p)) * (arv2->qtd + 1));
+        }
+
+        arv->qtd = meio;
+
+        return arv2;
+
+    } else {
+
+        return 0;
+
+    }
 }

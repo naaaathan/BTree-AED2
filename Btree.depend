@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1575581328 source:/home/nathan/C/BTree-AED2/main.c
+	<stdio.h>
+	<math.h>
+	"btree.h"
+
+1575581064 /home/nathan/C/BTree-AED2/btree.h
+
+1575581401 source:/home/nathan/C/BTree-AED2/btree.c
+	<stdio.h>
+	<math.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"btree.h"
+
