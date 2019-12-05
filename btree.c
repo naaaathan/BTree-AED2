@@ -8,7 +8,7 @@
 #define M 4
 
 
-struct ArvB   //FEITA
+struct ArvB  
 {
     int   qtd;
     int  chaves[M];
@@ -16,7 +16,7 @@ struct ArvB   //FEITA
     struct ArvB *p[M+1];
 };
 
-ArvB cria_ArvB()  //FEITA
+ArvB cria_ArvB() 
 {
 
     ArvB p;
@@ -27,7 +27,7 @@ ArvB cria_ArvB()  //FEITA
     return p;
 }
 
-int libera_ArvB(ArvB raiz)  //FAZENDO==============================>(NAO ESTA DANDO CERTO )
+int libera_ArvB(ArvB raiz)  
 {
     if(raiz->qtd == 0)
     {
@@ -49,7 +49,7 @@ int libera_ArvB(ArvB raiz)  //FAZENDO==============================>(NAO ESTA DA
 
     raiz->qtd = 0;
 
-    free(raiz);// LIBERA
+    free(raiz);
 
     return 1;
 }
@@ -74,7 +74,7 @@ void insere_ArvB(ArvB arv, int valor)
 
 }
 
-int ehVazia_ArvB(ArvB raiz)  //FEITA
+int ehVazia_ArvB(ArvB raiz) 
 {
 
     if(raiz->qtd == 0)
@@ -92,7 +92,7 @@ int ehVazia_ArvB(ArvB raiz)  //FEITA
 
 }
 
-int totalNO_ArvB(ArvB raiz) // FAZENDO
+int totalNO_ArvB(ArvB raiz) 
 {
 
     int cont ;
