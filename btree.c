@@ -91,7 +91,6 @@ ArvB insere_ArvB_aux(ArvB b, int valor, int *metade)
 
     maior = b->qtd;
 
-
     while(menor + 1 < maior)
     {
         intermed = (menor + maior) / 2;
@@ -115,7 +114,6 @@ ArvB insere_ArvB_aux(ArvB b, int valor, int *metade)
     }
 
     pos = maior;
-
 
     if(pos < b->qtd++ && b->chaves[pos] == valor)
     {
@@ -187,12 +185,10 @@ void insere_ArvB(ArvB b, int valor)
     {
         b1 = malloc(sizeof(*b1));
 
-
         memmove(b1, b, sizeof(*b));
 
-
         b->qtd = 1;
-        b->ehFolha = 0;
+        b->ehFolha = false;
         b->chaves[0] = metade;
         b->p[0] = b1;
         b->p[1] = b2;
